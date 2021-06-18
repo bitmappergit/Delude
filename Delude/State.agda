@@ -13,93 +13,118 @@ open import Delude.Lens
 open import Delude.Semiring
 open import Delude.Ring
 
-record StateT {a : Level} (S : Set a) (M : Set a → Set a) (A : Set a) : Set a where
+private
+  variable
+    a b : Level
+
+record StateT (S : Set a) (M : Set a → Set b) (A : Set a) : Set (a ⊔ b) where
   constructor mkStateT
   field runStateT : S → M (A × S)
 
 open StateT public
 
-state : {a : Level}
-      → {S A : Set a}
-      → {M : Set a → Set a}
+state : {S A : Set a}
+      → {M : Set a → Set b}
       → ⦃ _ : Monad M ⦄
       → (S → (A × S))
       → StateT S M A
 state f = mkStateT (return ∘ f)
 
-State : {a : Level} → Set a → Set a → Set a
+State : Set a → Set a → Set a
 State S A = StateT S Identity A
 
-runState : {a : Level} → {S A : Set a} → State S A → S → (A × S)
+runState : {S A : Set a} → State S A → S → (A × S)
 runState m = runIdentity ∘ runStateT m
 
-evalState : {a : Level} → {S A : Set a} → State S A → S → A
+evalState : {S A : Set a} → State S A → S → A
 evalState m s = fst (runState m s)
 
-instance FunctorStateT : {a : Level}
-                       → {S : Set a}
-                       → {M : Set a → Set a}
+instance FunctorStateT : {S : Set a}
+                       → {M : Set a → Set b}
                        → ⦃ _ : Monad M ⦄
                        → Functor (StateT S M)
 
-map ⦃ FunctorStateT ⦄ f m = mkStateT λ s → map (λ (a , x) → (f a , x)) $ runStateT m s
+map ⦃ FunctorStateT ⦄ f m = mkStateT λ s → map (λ (a , x) → (f a , x)) (runStateT m s)
 
-instance ApplicativeStateT : {a : Level}
-                           → {S : Set a}
-                           → {M : Set a → Set a}
+instance ApplicativeStateT : {S : Set a}
+                           → {M : Set a → Set b}
                            → ⦃ _ : Monad M ⦄
                            → Applicative (StateT S M)
 
 pure ⦃ ApplicativeStateT ⦄ a = mkStateT λ s → return (a , s)
+ 
 _<*>_ ⦃ ApplicativeStateT ⦄ (mkStateT mf) (mkStateT mx) = mkStateT λ s → do
   (f , sf) ← mf s
   (x , sx) ← mx sf
   return (f x , sx)
 
-instance MonadStateT : {a : Level}
-                     → {S : Set a}
-                     → {M : Set a → Set a}
+instance MonadStateT : {S : Set a}
+                     → {M : Set a → Set b}
                      → ⦃ _ : Monad M ⦄
                      → Monad (StateT S M)
 
-_>>=_ ⦃ MonadStateT ⦄ m k = mkStateT λ s → do
-  (a , ns) ← runStateT m s
-  runStateT (k a) ns
+_>>=_ ⦃ MonadStateT ⦄ m k = mkStateT λ s →
+  do (a , ns) ← runStateT m s
+     runStateT (k a) ns
 
-gets : {a : Level}
-     → {S A : Set a}
-     → {M : Set a → Set a}
+gets : {S A : Set a}
+     → {M : Set a → Set b}
      → ⦃ _ : Monad M ⦄
      → (S → A)
      → StateT S M A
 gets f = state λ s → (f s , s)
 
-modify : {a : Level}
-       → {S A : Set a}
-       → {M : Set a → Set a}
+modify : {S : Set a}
+       → {M : Set a → Set b}
        → ⦃ _ : Monad M ⦄
        → (S → S)
        → StateT S M ⊤
 modify f = state λ s → (unit , f s)
 
-get : {a : Level}
-    → {S : Set a}
-    → {M : Set a → Set a}
+get : {S : Set a}
+    → {M : Set a → Set b}
     → ⦃ _ : Monad M ⦄
     → StateT S M S
 get = state λ s → (s , s)
 
-_%=_ : {a : Level} → {S A : Set a} → SimpleSetter S A → (A → A) → State S ⊤
-_%=_ l f = modify {A = ⊤} (l %~ f)
+_$=_ : {S A : Set a}
+     → {M : Set a → Set b}
+     → ⦃ _ : Monad M ⦄
+     → MonoSetter S A
+     → (A → A)
+     → StateT S M ⊤
+_$=_ l f = modify (l $~ f)
 
-_:=_ : {a : Level} → {S A : Set a} → SimpleSetter S A → A → State S ⊤
-_:=_ l x = modify {A = ⊤} (l :~ x)
+_:=_ : {a b : Level}
+     → {S A : Set a}
+     → {M : Set a → Set b}
+     → ⦃ _ : Monad M ⦄
+     → MonoSetter S A
+     → A
+     → StateT S M ⊤
+_:=_ l x = modify (l :~ x)
 
-_+=_ : {a : Level} → {S A : Set a} → ⦃ _ : Semiring A ⦄ → SimpleSetter S A → A → State S ⊤
-_+=_ l f = modify {A = ⊤} (l %~ _+ f)
+_+=_ : {S A : Set a}
+     → {M : Set a → Set b}
+     → ⦃ _ : Monad M ⦄
+     → ⦃ _ : Semiring A ⦄
+     → MonoSetter S A
+     → A
+     → StateT S M ⊤
+_+=_ l f = modify (l $~ _+ f)
 
-_-=_ : {a : Level} → {S A : Set a} → ⦃ _ : Ring A ⦄ → SimpleSetter S A → A → State S ⊤
-_-=_ l f = modify {A = ⊤} (l %~ _- f)
+_-=_ : {S A : Set a}
+     → {M : Set a → Set b}
+     → ⦃ _ : Monad M ⦄
+     → ⦃ _ : Ring A ⦄
+     → MonoSetter S A
+     → A
+     → StateT S M ⊤
+_-=_ l f = modify (l $~ _- f)
 
-use : {a : Level} → {S A : Set a} → SimpleGetter S A → State S A
+use : {S A : Set a}
+    → {M : Set a → Set b}
+    → ⦃ _ : Monad M ⦄
+    → MonoGetter S A
+    → StateT S M A
 use = gets ∘ view

@@ -2,7 +2,11 @@ module Delude.Divisible where
 
 open import Agda.Primitive
 
-record Divisible {a} (A : Set a) : Set a where
+private
+  variable
+    a : Level
+
+record Divisible (A : Set a) : Set a where
   field
     _/_ : A → A → A
     _%_ : A → A → A

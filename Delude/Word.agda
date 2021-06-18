@@ -16,9 +16,9 @@ open import Delude.Eq
 open import Delude.Ord
 
 Word : ℕ → Set
-Word s = Vec Bool s
+Word = Vec Bool
 
-word-add : Bool → {s : ℕ} → Word s → Word s → Word s
+word-add : {s : ℕ} → Bool → Word s → Word s → Word s
 word-add c (#t ∷ m) (#t ∷ n) = c ∷ word-add #t m n
 word-add c (#f ∷ m) (#f ∷ n) = c ∷ word-add #f m n
 word-add c (#t ∷ m) (#f ∷ n) = ¬ c ∷ word-add c m n
@@ -33,8 +33,8 @@ instance NumWord : {s : ℕ} → Num (Word s)
 instance NegWord : {s : ℕ} → Neg (Word s)
 
 zro ⦃ SemiringWord ⦄ = replicate #f
-one ⦃ SemiringWord {suc s} ⦄ = #t ∷ replicate {s} #f
 one ⦃ SemiringWord {zero} ⦄ = []
+one ⦃ SemiringWord {suc _} ⦄ = #t ∷ zro
 _+_ ⦃ SemiringWord ⦄ = word-add #f
 _*_ ⦃ SemiringWord ⦄ a = mul a ∘ toNat
   where mul : {s : ℕ} → Word s → ℕ → Word s
@@ -45,10 +45,10 @@ negate ⦃ RingWord ⦄ x = word-add #t zro (map ¬ x)
 _-_ ⦃ RingWord ⦄ a b = word-add #t a (map ¬ b)
 
 fromNat ⦃ NumWord {zero} ⦄ _ = []
-fromNat ⦃ NumWord {suc s} ⦄ zero = zro
-fromNat ⦃ NumWord {suc s} ⦄ x@(suc _) with (x % suc one)
-... | zero = #f ∷ fromNat (x / suc one)
-... | suc _ = #t ∷ fromNat (x / suc one)
+fromNat ⦃ NumWord {suc _} ⦄ zero = zro
+fromNat ⦃ NumWord {suc _} ⦄ (suc x) with (suc x % suc one)
+... | zero = #f ∷ fromNat (suc x / suc one)
+... | suc _ = #t ∷ fromNat (suc x / suc one)
 
 toNat ⦃ NumWord ⦄ = toNat′ one
   where toNat′ : {s : ℕ} → ℕ → Word s → ℕ
@@ -66,10 +66,7 @@ Word64 = Word 64
 
 instance EqWord : {s : ℕ} → Eq (Word s)
 
-_==_ ⦃ EqWord ⦄ (#t ∷ xs) (#t ∷ ys) = xs == ys
-_==_ ⦃ EqWord ⦄ (#f ∷ xs) (#f ∷ ys) = xs == ys
-_==_ ⦃ EqWord ⦄ (#f ∷ xs) (#t ∷ ys) = #f
-_==_ ⦃ EqWord ⦄ (#t ∷ xs) (#f ∷ ys) = #f
+_==_ ⦃ EqWord ⦄ (x ∷ xs) (y ∷ ys) = (x == y) ∧ (xs == ys)
 _==_ ⦃ EqWord ⦄ [] [] = #t
 
 instance OrdWord : {s : ℕ} → Ord (Word s)
