@@ -13,19 +13,19 @@ record Exchange {a} (A B S T : Set a) : Set a where
   field sa : (S → A)
   field bt : (B → T)
 
-instance ProfunctorExchange : ∀ {a} {A B : Set a} → Profunctor (Exchange A B)
+instance ProfunctorExchange : ∀ {a} {A B : Set a}
+                            → Profunctor (Exchange A B)
 
 dimap ⦃ ProfunctorExchange ⦄ f g (exchange sa bt) = exchange (sa ∘ f) (g ∘ bt)
 
-instance FunctorExchange : ∀ {a} {A S B : Set a} → Functor (Exchange A B S)
+instance FunctorExchange : ∀ {a} {A S B : Set a}
+                         → Functor (Exchange A B S)
 
 map ⦃ FunctorExchange ⦄ f (exchange sa bt) = exchange sa (f ∘ bt)
 
 Iso : ∀ {a} → (S T A B : Set a) → Set (lsuc a)
-Iso {a} S T A B = {P : Set a → Set a → Set a}
-                → ⦃ _ : Profunctor P ⦄
-                → {F : Set a → Set a}
-                → ⦃ _ : Functor F ⦄
+Iso {a} S T A B = {P : Set a → Set a → Set a} ⦃ _ : Profunctor P ⦄
+                → {F : Set a → Set a} ⦃ _ : Functor F ⦄
                 → P A (F B)
                 → P S (F T)
 
@@ -42,14 +42,13 @@ iso : ∀ {a} {S T A B : Set a} → (S → A) → (B → T) → Iso S T A B
 iso sa bt = dimap sa (map bt)
 
 Lens : ∀ {a} → (S T A B : Set a) → Set (lsuc a)
-Lens {a} S T A B = {F : Set a → Set a}
-                 → ⦃ _ : Functor F ⦄
+Lens {a} S T A B = {F : Set a → Set a} ⦃ _ : Functor F ⦄
                  → (A → F B)
                  → (S → F T)
 
 MonoLens : ∀ {a} → (S A : Set a) → Set (lsuc a)
 MonoLens S A = Lens S S A A
-  
+
 Setter : ∀ {a} → (S T A B : Set a) → Set a
 Setter S T A B = (A → Identity B) → (S → Identity T)
 

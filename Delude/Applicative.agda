@@ -4,7 +4,7 @@ open import Agda.Primitive
 
 open import Delude.Functor
 
-record Applicative {a b} (F : Set a → Set b) : Set (lsuc (a ⊔ b)) where
+record Applicative {a b} (F : Set a → Set b) : Set (lsuc a ⊔ b) where
   infixl 4 _<*>_
   
   field pure : {A : Set a} → A → F A

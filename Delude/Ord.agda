@@ -5,7 +5,7 @@ open import Agda.Primitive
 open import Delude.Bool
 open import Delude.Eq
 
-record Ord {a : Level} (A : Set a) : Set a where
+record Ord {a} (A : Set a) : Set a where
   field
     _<_ : A → A → Bool
     _>_ : A → A → Bool

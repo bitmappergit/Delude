@@ -28,6 +28,6 @@ _∨_ : Bool → Bool → Bool
 
 infix 0 if_then_else_
 
-if_then_else_ : {a : Level} → {A : Set a} → Bool → A → A → A
+if_then_else_ : ∀ {a} {A : Set a} → Bool → A → A → A
 if #t then x else _ = x
 if #f then _ else y = y

@@ -4,7 +4,7 @@ open import Agda.Primitive
 
 open import Delude.Bool
 
-record Eq {a : Level} (A : Set a) : Set a where
+record Eq {a} (A : Set a) : Set a where
   field
     _==_ : A → A → Bool
   

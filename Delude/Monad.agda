@@ -5,7 +5,7 @@ open import Agda.Primitive
 open import Delude.Functor
 open import Delude.Applicative
 
-record Monad {a b} (M : Set a → Set b) : Set (lsuc (a ⊔ b)) where
+record Monad {a b} (M : Set a → Set b) : Set (lsuc a ⊔ b) where
   infixl 1 _>>=_ _>>_
   
   field _>>=_ : {A B : Set a} → M A → (A → M B) → M B

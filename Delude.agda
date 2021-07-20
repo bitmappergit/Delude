@@ -33,9 +33,9 @@ open import Delude.Unit public
 open import Delude.Empty public
 open import Delude.Equality public
 open import Delude.Negation public
+open import Delude.Sequence public
 open import Delude.Semigroup public
 open import Delude.Monoid public
-open import Delude.Sequence public
 open import Delude.String public
 open import Delude.Char public
 open import Delude.IO public

@@ -6,20 +6,15 @@ open import Delude.Functor
 open import Delude.Applicative
 open import Delude.Monad
 
-private
-  variable
-    a : Level
-
-record Identity (A : Set a) : Set a where
+record Identity {a} (A : Set a) : Set a where
   constructor mkIdentity
-  field
-    runIdentity : A
+  field runIdentity : A
 
 open Identity public
 
-instance FunctorIdentity : Functor {a} Identity
-instance ApplicativeIdentity : Applicative {a} Identity
-instance MonadIdentity : Monad {a} Identity
+instance FunctorIdentity : ∀ {a} → Functor {a} Identity
+instance ApplicativeIdentity : ∀ {a} → Applicative {a} Identity
+instance MonadIdentity : ∀ {a} → Monad {a} Identity
 
 map ⦃ FunctorIdentity ⦄ f (mkIdentity x) = mkIdentity (f x)
 

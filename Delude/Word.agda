@@ -18,7 +18,7 @@ open import Delude.Ord
 Word : ℕ → Set
 Word = Vec Bool
 
-word-add : {s : ℕ} → Bool → Word s → Word s → Word s
+word-add : ∀ {s} → Bool → Word s → Word s → Word s
 word-add c (#t ∷ m) (#t ∷ n) = c ∷ word-add #t m n
 word-add c (#f ∷ m) (#f ∷ n) = c ∷ word-add #f m n
 word-add c (#t ∷ m) (#f ∷ n) = not c ∷ word-add c m n
@@ -27,17 +27,17 @@ word-add _ [] [] = []
 
 {-# INLINE word-add #-}
 
-instance SemiringWord : {s : ℕ} → Semiring (Word s)
-instance RingWord : {s : ℕ} → Ring (Word s)
-instance NumWord : {s : ℕ} → Num (Word s)
-instance NegWord : {s : ℕ} → Neg (Word s)
+instance SemiringWord : ∀ {s} → Semiring (Word s)
+instance RingWord : ∀ {s} → Ring (Word s)
+instance NumWord : ∀ {s} → Num (Word s)
+instance NegWord : ∀ {s} → Neg (Word s)
 
 zro ⦃ SemiringWord ⦄ = replicate #f
 one ⦃ SemiringWord {zero} ⦄ = []
 one ⦃ SemiringWord {suc _} ⦄ = #t ∷ zro
 _+_ ⦃ SemiringWord ⦄ = word-add #f
 _*_ ⦃ SemiringWord ⦄ a = mul a ∘ toNat
-  where mul : {s : ℕ} → Word s → ℕ → Word s
+  where mul : ∀ {s} → Word s → ℕ → Word s
         mul m (suc n) = word-add #f m (mul m n)
         mul m zero = zro
 
@@ -51,7 +51,7 @@ fromNat ⦃ NumWord {suc _} ⦄ (suc x) with (suc x % suc one)
 ... | suc _ = #t ∷ fromNat (suc x / suc one)
 
 toNat ⦃ NumWord ⦄ = toNat′ one
-  where toNat′ : {s : ℕ} → ℕ → Word s → ℕ
+  where toNat′ : ∀ {s} → ℕ → Word s → ℕ
         toNat′ c (#t ∷ xs) = c + toNat′ (c * suc one) xs
         toNat′ c (#f ∷ xs) = toNat′ (c * suc one) xs
         toNat′ c [] = zro
@@ -64,12 +64,12 @@ Word16 = Word 16
 Word32 = Word 32
 Word64 = Word 64
 
-instance EqWord : {s : ℕ} → Eq (Word s)
+instance EqWord : ∀ {s} → Eq (Word s)
 
 _==_ ⦃ EqWord ⦄ (x ∷ xs) (y ∷ ys) = (x == y) ∧ (xs == ys)
 _==_ ⦃ EqWord ⦄ [] [] = #t
 
-instance OrdWord : {s : ℕ} → Ord (Word s)
+instance OrdWord : ∀ {s} → Ord (Word s)
 
 _<_ ⦃ OrdWord ⦄ (#t ∷ xs) (#t ∷ ys) = xs < ys
 _<_ ⦃ OrdWord ⦄ (#f ∷ xs) (#f ∷ ys) = xs < ys
