@@ -2,5 +2,5 @@ module Delude.Unit.Polymorphic where
 
 open import Agda.Primitive
 
-data ⊤ {a} : Set a where
-  unit : ⊤ {a}
+record ⊤ {a} : Set a where
+  instance constructor unit

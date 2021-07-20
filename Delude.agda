@@ -36,3 +36,4 @@ open import Delude.Negation public
 open import Delude.Semigroup public
 open import Delude.Monoid public
 open import Delude.Sequence public
+open import Delude.IO public

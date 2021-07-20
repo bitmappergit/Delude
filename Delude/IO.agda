@@ -5,6 +5,8 @@ open import Agda.Primitive
 open import Delude.Functor
 open import Delude.Applicative
 open import Delude.Monad
+open import Delude.String
+open import Delude.Unit
 
 postulate IO : ∀ {a} → Set a → Set a
 
@@ -15,15 +17,16 @@ postulate IO : ∀ {a} → Set a → Set a
 {-# COMPILE GHC IO = type AgdaIO #-}
 
 private
-  postulate mapIO : ∀ {a} {A B : Set a} → (A → B) → IO A → IO B
-  postulate pureIO : ∀ {a} {A : Set a} → A → IO A
-  postulate appIO : ∀ {a} {A B : Set a} → IO (A → B) → IO A → IO B
-  postulate bindIO : ∀ {a} {A B : Set a} → IO A → (A → IO B) → IO B
-  
-{-# COMPILE GHC mapIO = fmap #-}
-{-# COMPILE GHC pureIO = pure #-}
-{-# COMPILE GHC appIO = (<*>) #-}
-{-# COMPILE GHC bindIO = (>>=) #-}
+  postulate
+    mapIO : ∀ {a b} {A : Set a} {B : Set b} → (A → B) → IO A → IO B
+    pureIO : ∀ {a} {A : Set a} → A → IO A
+    appIO : ∀ {a b} {A : Set a} {B : Set b} → IO (A → B) → IO A → IO B
+    bindIO : ∀ {a b} {A : Set a} {B : Set b} → IO A → (A → IO B) → IO B
+
+{-# COMPILE GHC mapIO = \_ _ _ _ -> fmap #-}
+{-# COMPILE GHC pureIO = \_ _ -> pure #-}
+{-# COMPILE GHC appIO = \_ _ _ _ -> (<*>) #-}
+{-# COMPILE GHC bindIO = \_ _ _ _ -> (>>=) #-}
 
 instance FunctorIO : ∀ {a} → Functor {a} IO
 
@@ -37,3 +40,12 @@ _<*>_ ⦃ ApplicativeIO ⦄ = appIO
 instance MonadIO : ∀ {a} → Monad {a} IO
 
 _>>=_ ⦃ MonadIO ⦄ = bindIO
+
+postulate
+  putStrLn : String → IO ⊤
+  getStrLn : IO String
+
+{-# FOREIGN GHC import qualified Data.Text.IO #-}
+
+{-# COMPILE GHC putStrLn = Data.Text.IO.putStrLn #-}
+{-# COMPILE GHC getStrLn = Data.Text.IO.getLine #-}

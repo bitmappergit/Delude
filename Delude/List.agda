@@ -13,6 +13,8 @@ data List {a} (A : Set a) : Set a where
   _∷_ : A → List A → List A
   [] : List A
 
+{-# BUILTIN LIST List #-}
+
 instance FunctorList : ∀ {a} → Functor {a} List
 
 map ⦃ FunctorList ⦄ f (x ∷ xs) = f x ∷ map f xs
