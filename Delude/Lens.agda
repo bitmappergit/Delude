@@ -74,7 +74,7 @@ set l a = runIdentity ∘ l (mkIdentity ∘ const a)
  
 infixr 4 _%~_
 infixr 4 _:~_
-infixr 4 _∙_
+infixr 4 _at_
 
 _%~_ : ∀ {a} {S T A B : Set a} → Setter S T A B → (A → B) → S → T
 _%~_ = over
@@ -82,8 +82,8 @@ _%~_ = over
 _:~_ : ∀ {a} {S T A B : Set a} → Setter S T A B → B → S → T
 _:~_ = set
 
-_∙_ : ∀ {a} {S A : Set a} → S → Getter A S A → A
-_∙_ = flip view
+_at_ : ∀ {a} {S A : Set a} → S → Getter A S A → A
+_at_ = flip view
 
 lens : ∀ {a} {S T A B : Set a} → (S → A) → (S → B → T) → Lens S T A B
 lens sa sbt afb s = sbt s <$> afb (sa s)
