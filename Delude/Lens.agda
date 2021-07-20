@@ -22,7 +22,7 @@ instance FunctorExchange : ∀ {a} {A S B : Set a} → Functor (Exchange A B S)
 
 map ⦃ FunctorExchange ⦄ f (exchange sa bt) = exchange sa (f ∘ bt)
 
-Iso : ∀ {a} (S T A B : Set a) → Set (lsuc a)
+Iso : ∀ {a} → (S T A B : Set a) → Set (lsuc a)
 Iso {a} S T A B = {P : Set a → Set a → Set a}
                 → ⦃ _ : Profunctor P ⦄
                 → {F : Set a → Set a}
@@ -30,37 +30,37 @@ Iso {a} S T A B = {P : Set a → Set a → Set a}
                 → P A (F B)
                 → P S (F T)
 
-MonoIso : ∀ {a} (S A : Set a) → Set (lsuc a)
+MonoIso : ∀ {a} → (S A : Set a) → Set (lsuc a)
 MonoIso S A = Iso S S A A
 
-AnIso : ∀ {a} (S T A B : Set a) → Set a
+AnIso : ∀ {a} → (S T A B : Set a) → Set a
 AnIso S T A B = Exchange A B A (Identity B) → Exchange A B S (Identity S)
 
-MonoAnIso : ∀ {a} (S A : Set a) → Set a
+MonoAnIso : ∀ {a} → (S A : Set a) → Set a
 MonoAnIso S A = AnIso S S A A
 
 iso : ∀ {a} {S T A B : Set a} → (S → A) → (B → T) → Iso S T A B
 iso sa bt = dimap sa (map bt)
 
-Lens : ∀ {a} (S T A B : Set a) → Set (lsuc a)
+Lens : ∀ {a} → (S T A B : Set a) → Set (lsuc a)
 Lens {a} S T A B = {F : Set a → Set a}
                  → ⦃ _ : Functor F ⦄
                  → (A → F B)
                  → (S → F T)
 
-MonoLens : ∀ {a} (S A : Set a) → Set (lsuc a)
+MonoLens : ∀ {a} → (S A : Set a) → Set (lsuc a)
 MonoLens S A = Lens S S A A
   
-Setter : ∀ {a} (S T A B : Set a) → Set a
+Setter : ∀ {a} → (S T A B : Set a) → Set a
 Setter S T A B = (A → Identity B) → (S → Identity T)
 
-MonoSetter : ∀ {a} (S A : Set a) → Set a
+MonoSetter : ∀ {a} → (S A : Set a) → Set a
 MonoSetter S A = Setter S S A A
 
-Getter : ∀ {a} (R S A : Set a) → Set a
+Getter : ∀ {a} → (R S A : Set a) → Set a
 Getter R S A = (A → Const R A) → (S → Const R S)
 
-MonoGetter : ∀ {a} (S A : Set a) → Set a
+MonoGetter : ∀ {a} → (S A : Set a) → Set a
 MonoGetter S A = Getter A S A
 
 view : ∀ {a} {S A : Set a} → Getter A S A → S → A

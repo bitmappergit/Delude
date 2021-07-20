@@ -33,7 +33,7 @@ _&_ x f = f x
 {-# INLINE _&_ #-}
 
 _∘_ : ∀ {a b c} {A : Set a} {B : A → Set b} {C : (x : A) → B x → Set c}
-    → (f : {x : A} (y : B x) → C x y)
+    → (f : {x : A} → (y : B x) → C x y)
     → (g : (x : A) → B x)
     → ((x : A) → C x (g x))
 _∘_ f g = λ x → f (g x)
