@@ -10,11 +10,9 @@ data Bool : Set where
 {-# BUILTIN TRUE #t #-}
 {-# BUILTIN FALSE #f #-}
 
-¬ : Bool → Bool
-¬ #t = #f
-¬ #f = #t
-
-{-# INLINE ¬ #-}
+not : Bool → Bool
+not #t = #f
+not #f = #t
 
 _∧_ : Bool → Bool → Bool
 #t ∧ #t = #t

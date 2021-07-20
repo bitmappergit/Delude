@@ -57,3 +57,14 @@ flip : {A : Set a}
 flip f = λ y x → f x y
 
 {-# INLINE flip #-}
+
+case_of_ : {A : Set a}
+         → {B : A → Set b}
+         → (x : A)
+         → ((x : A) → B x)
+         → B x
+case_of_ = _&_
+
+infix 0 case_of_
+
+{-# INLINE case_of_ #-}

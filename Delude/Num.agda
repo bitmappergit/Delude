@@ -4,12 +4,13 @@ open import Agda.Primitive
 
 open import Delude.Function
 open import Delude.Nat
+open import Delude.Semiring
 
 record Num {a : Level} (A : Set a) : Set a where
   field
     fromNat : ℕ → A
     toNat : A → ℕ
-
+  
   {-# INLINE fromNat #-}
   {-# INLINE toNat #-}
 

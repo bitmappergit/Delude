@@ -9,7 +9,7 @@ record Eq {a : Level} (A : Set a) : Set a where
     _==_ : A → A → Bool
   
   _!=_ : A → A → Bool
-  x != y = ¬ (x == y)
+  x != y = not (x == y)
 
 open Eq ⦃ ... ⦄ public
 

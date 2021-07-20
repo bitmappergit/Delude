@@ -21,8 +21,8 @@ Word = Vec Bool
 word-add : {s : ℕ} → Bool → Word s → Word s → Word s
 word-add c (#t ∷ m) (#t ∷ n) = c ∷ word-add #t m n
 word-add c (#f ∷ m) (#f ∷ n) = c ∷ word-add #f m n
-word-add c (#t ∷ m) (#f ∷ n) = ¬ c ∷ word-add c m n
-word-add c (#f ∷ m) (#t ∷ n) = ¬ c ∷ word-add c m n
+word-add c (#t ∷ m) (#f ∷ n) = not c ∷ word-add c m n
+word-add c (#f ∷ m) (#t ∷ n) = not c ∷ word-add c m n
 word-add _ [] [] = []
 
 {-# INLINE word-add #-}
@@ -41,8 +41,8 @@ _*_ ⦃ SemiringWord ⦄ a = mul a ∘ toNat
         mul m (suc n) = word-add #f m (mul m n)
         mul m zero = zro
 
-negate ⦃ RingWord ⦄ x = word-add #t zro (map ¬ x)
-_-_ ⦃ RingWord ⦄ a b = word-add #t a (map ¬ b)
+negate ⦃ RingWord ⦄ x = word-add #t zro (map not x)
+_-_ ⦃ RingWord ⦄ a b = word-add #t a (map not b)
 
 fromNat ⦃ NumWord {zero} ⦄ _ = []
 fromNat ⦃ NumWord {suc _} ⦄ zero = zro
