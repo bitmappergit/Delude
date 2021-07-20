@@ -10,9 +10,8 @@ open import Delude.Profunctor
 
 record Exchange {a} (A B S T : Set a) : Set a where
   constructor exchange
-  field
-    sa : (S → A)
-    bt : (B → T)
+  field sa : (S → A)
+  field bt : (B → T)
 
 instance ProfunctorExchange : ∀ {a} {A B : Set a} → Profunctor (Exchange A B)
 

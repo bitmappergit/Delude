@@ -7,6 +7,8 @@ open import Delude.Functor
 open import Delude.Semigroup
 open import Delude.Monoid
 
+infixr 5 _∷_
+
 data List {a} (A : Set a) : Set a where
   _∷_ : A → List A → List A
   [] : List A
@@ -19,7 +21,7 @@ map ⦃ FunctorList ⦄ _ [] = []
 instance SemigroupList : ∀ {a} {A : Set a} → Semigroup (List A)
 
 _∙_ ⦃ SemigroupList ⦄ [] ys = ys
-_∙_ ⦃ SemigroupList ⦄ (x ∷ xs) ys = x ∷ (xs ∙ ys)
+_∙_ ⦃ SemigroupList ⦄ (x ∷ xs) ys = x ∷ xs ∙ ys
 
 instance MonoidList : ∀ {a} {A : Set a} → Monoid (List A)
 
