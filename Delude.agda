@@ -29,3 +29,10 @@ open import Delude.Bimap public
 open import Delude.Profunctor public
 open import Delude.Eq public
 open import Delude.Ord public
+open import Delude.Unit public
+open import Delude.Empty public
+open import Delude.Equality public
+open import Delude.Negation public
+open import Delude.Semigroup public
+open import Delude.Monoid public
+open import Delude.Sequence public
